@@ -1,0 +1,15 @@
+# Flask & Web Framework
+Flask
+
+# OpenAI & Language Model
+openai
+langchain
+langchain-openai
+python-dotenv
+
+# Data Processing & Embeddings
+numpy
+
+gunicorn
+
+# Frontend (Bootstrap, jQuery - handled via CDN, but add if needed)

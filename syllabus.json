@@ -1,0 +1,10 @@
+{
+    "HTML Basics": ["HTML Structure", "Headings", "Paragraphs", "Lists", "Links"],
+    "CSS": ["Cascading Style Sheets", "Selectors", "Box Model", "Flexbox", "Grid"],
+    "JavaScript": ["Variables", "Functions", "DOM Manipulation", "Event Handling", "ES6 Features"],
+    "Advanced JavaScript": ["jQuery", "AJAX", "JSON", "Debugging JavaScript"],
+    "Frameworks & Libraries": ["Bootstrap", "Bootstrap Carousel", "Bootstrap Forms", "Bootstrap Grid"],
+    "Backend Technologies": ["NodeJS", "ExpressJS", "MongoDB", "NPM"],
+    "Full-Stack Development": ["Web Stack", "CRUD Operations", "Authentication & Security"],
+    "Other Topics": ["XML", "GUI Programming", "Web Software Development Workflow"]
+}

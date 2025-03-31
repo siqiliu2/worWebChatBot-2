@@ -27,7 +27,7 @@
       background: #fff;
       border-radius: 10px;
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-      display: flex;
+      display: none;
       flex-direction: column;
     }
 
@@ -50,10 +50,7 @@
 
     .chat-body {
       flex-grow: 1;
-      width: 100%;
       height: 600px;
-      max-width: 100%;
-      max-height: 600px;
       overflow-y: auto;
       padding: 15px;
       background: #f1f1f1;
@@ -125,119 +122,178 @@
       margin-top: 5px;
     }
 
-    /* Email Modal Styles */
-    .modal-backdrop.show {
-      opacity: 0.5;
+    .modal-content {
+      overflow-y: auto;
+      max-height: 90vh;
     }
   </style>
 </head>
 <body>
-  <!-- Email Prompt Modal -->
-  <div class="modal" id="emailModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content p-4">
-        <h5>Enter your email to start chatting</h5>
-        <input type="email" id="userEmail" class="form-control my-2" placeholder="you@example.com" required>
-        <button id="startChat" class="btn btn-primary">Start Chat</button>
+
+<!-- Terms and Conditions Modal -->
+<div class="modal" id="termsModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content p-4">
+      <h4 class="mb-3">Terms and Conditions</h4>
+      <div class="mb-3" style="font-size: 0.95rem; white-space: pre-wrap;">
+Welcome to WebDev ChatBot!
+
+You’re invited to test WebDev ChatBot, an AI-powered chatbot designed to assist you with your web development coursework at Penn State University. Before you start, please read and agree to these terms.
+
+1. Purpose of Data Collection
+  - We’re collecting your email ID and chat interactions to study how it supports your learning.
+  - This research is led by Professor Dhananjay Singh and the Penn State team.
+
+2. What Data We Collect
+  - Email ID to confirm you're a student and associate chats with your session.
+  - Chat content and timestamps.
+  - No personal info beyond what you voluntarily type.
+
+3. Use and Protection of Data
+  - Used only for research, securely stored, and anonymized in reports.
+
+4. Your Rights
+  - You may stop using the bot at any time.
+  - Contact dvs6298@psu.edu to see or delete your data.
+
+5. Risks and Benefits
+  - Minimal risks. Benefits include access to a helpful tool and contributing to research.
+
+6. Liability Disclaimer
+  - The chatbot uses GPT tech and is for educational use only.
+  - Use judgment; responses are not guaranteed to be accurate.
+
+7. By clicking “I Agree”, you confirm:
+  - You're 18+ (or have consent).
+  - You're a Penn State student in Spring 2025 Web Dev.
+  - You agree to data collection and terms above.
       </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" type="checkbox" id="agreeCheckbox">
+        <label class="form-check-label" for="agreeCheckbox">
+          I have read and agree to the Terms and Conditions.
+        </label>
+      </div>
+      <button id="acceptTermsBtn" class="btn btn-primary" disabled>I Agree</button>
+    </div>
+  </div>
+</div>
+
+<!-- Email Prompt Modal -->
+<div class="modal" id="emailModal" tabindex="-1" style="display: none; background-color: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content p-4">
+      <h5>Enter your email to start chatting</h5>
+      <input type="email" id="userEmail" class="form-control my-2" placeholder="you@example.com" required>
+      <button id="startChat" class="btn btn-primary">Start Chat</button>
+    </div>
+  </div>
+</div>
+
+<!-- Chat UI -->
+<div class="chat-container">
+  <div class="chat-header">
+    <img src="{{ url_for('static', filename='new-logo.png') }}" alt="Logo">
+    <div>
+      <h5>IST 256 Chatbot</h5>
+      <p>Ask me anything about the course!</p>
     </div>
   </div>
 
-  <!-- Main Chat UI -->
-  <div class="chat-container" style="display: none;">
-    <div class="chat-header">
-      <img src="{{ url_for('static', filename='new-logo.png') }}" alt="Logo">
-      <div>
-        <h5>IST 256 Chatbot</h5>
-        <p>Ask me anything about the course!</p>
-      </div>
-    </div>
+  <div id="messageContainer" class="chat-body"></div>
 
-    <div id="messageContainer" class="chat-body"></div>
-
-    <div class="chat-footer">
-      <input type="text" id="userInput" placeholder="Type your message..." required>
-      <button id="send"><i class="fas fa-arrow-up"></i></button>
-    </div>
-
-    <div class="typing-indicator">Chatbot is typing...</div>
+  <div class="chat-footer">
+    <input type="text" id="userInput" placeholder="Type your message..." required>
+    <button id="send"><i class="fas fa-arrow-up"></i></button>
   </div>
 
-  <script>
-    let userEmail = null;
-  
-    // Helper function to escape HTML special characters
-    function escapeHTML(str) {
-      return str.replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;");
-    }
-  
-    // On email submit
-    $("#startChat").click(function () {
-      const emailInput = $("#userEmail").val().trim();
-      if (emailInput === "") return;
-  
-      userEmail = emailInput;
-  
-      $.ajax({
-        type: "POST",
-        url: "/start",
-        data: JSON.stringify({ email: userEmail }),
-        contentType: "application/json",
-        success: function () {
-          $("#emailModal").hide();
-          $(".chat-container").show();
-        }
-      });
-    });
-  
-    function scrollToBottom() {
-      var chatBody = document.getElementById("messageContainer");
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-  
-    function sendMessage() {
-      var userMessage = $("#userInput").val().trim();
-      if (userMessage === "") return;
-  
-      var str_time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  
-      var userHtml = `<div class='text-end'><div class='message user-message'>${userMessage}<br><small>${str_time}</small></div></div>`;
-      $("#messageContainer").append(userHtml);
-      $("#userInput").val("");
-      scrollToBottom();
-  
-      $(".typing-indicator").show();
-  
-      $.ajax({
-        type: "POST",
-        url: "/get",
-        data: JSON.stringify({ msg: userMessage, email: userEmail }),
-        contentType: "application/json",
-        success: function (data) {
-          $(".typing-indicator").hide();
-  
-          // Escape HTML in the bot's response
-          var safeResponse = escapeHTML(data.response);
-  
-          // Wrap the escaped response in <pre><code> for better formatting
-          var botHtml = `<div class='text-start'><div class='message bot-message'><pre><code>${safeResponse}</code></pre><br><small>${str_time}</small></div></div>`;
-  
-          $("#messageContainer").append(botHtml);
-          scrollToBottom();
-        }
-      });
-    }
-  
-    $("#send").click(sendMessage);
-  
-    $("#userInput").keypress(function (e) {
-      if (e.which === 13) {
-        e.preventDefault();
-        sendMessage();
+  <div class="typing-indicator">Chatbot is typing...</div>
+</div>
+
+<script>
+  let userEmail = null;
+
+  // Restore your escapeHTML function
+  function escapeHTML(str) {
+    return str.replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+  }
+
+  // Enable 'I Agree' when checkbox is selected
+  $("#agreeCheckbox").change(function () {
+    $("#acceptTermsBtn").prop("disabled", !this.checked);
+  });
+
+  // On Agree → Show email input
+  $("#acceptTermsBtn").click(function () {
+    $("#termsModal").hide();
+    $("#emailModal").show();
+  });
+
+  // On email submission
+  $("#startChat").click(function () {
+    const emailInput = $("#userEmail").val().trim();
+    if (emailInput === "") return;
+
+    userEmail = emailInput;
+
+    $.ajax({
+      type: "POST",
+      url: "/start",
+      data: JSON.stringify({ email: userEmail }),
+      contentType: "application/json",
+      success: function () {
+        $("#emailModal").hide();
+        $(".chat-container").show();
       }
     });
-  </script>
+  });
+
+  function scrollToBottom() {
+    var chatBody = document.getElementById("messageContainer");
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  function sendMessage() {
+    var userMessage = $("#userInput").val().trim();
+    if (userMessage === "") return;
+
+    var str_time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    var $userMsgDiv = $("<div>", { class: "text-end" });
+    var $userMsgContainer = $("<div>", { class: "message user-message" }).text(userMessage);
+    $userMsgContainer.append($("<br>")).append($("<small>").text(str_time));
+    $userMsgDiv.append($userMsgContainer);
+    $("#messageContainer").append($userMsgDiv);
+    $("#userInput").val("");
+    scrollToBottom();
+
+    $(".typing-indicator").show();
+
+    $.ajax({
+      type: "POST",
+      url: "/get",
+      data: JSON.stringify({ msg: userMessage, email: userEmail }),
+      contentType: "application/json",
+      success: function (data) {
+        $(".typing-indicator").hide();
+        var $botMsgDiv = $("<div>", { class: "text-start" });
+        var $botMsgContainer = $("<div>", { class: "message bot-message" }).html(`<pre><code>${escapeHTML(data.response)}</code></pre><br><small>${str_time}</small>`);
+        $botMsgDiv.append($botMsgContainer);
+        $("#messageContainer").append($botMsgDiv);
+        scrollToBottom();
+      }
+    });
+  }
+
+  $("#send").click(sendMessage);
+  $("#userInput").keypress(function (e) {
+    if (e.which === 13) {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+</script>
 </body>
 </html>

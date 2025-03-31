@@ -13,6 +13,8 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 if not openai_api_key:
     raise ValueError("OpenAI API Key is missing! Set it in the .env file.")
 
+print(os.getenv("OPENAI_API_KEY"))
+
 # --- Load syllabus and group project assignment ---
 def load_syllabus(file_path):
     if not os.path.exists(file_path):

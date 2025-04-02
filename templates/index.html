@@ -281,7 +281,7 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
         var $botMsgDiv = $("<div>", { class: "text-start" });
         var $botMsgContainer = $("<div>", { class: "message bot-message" }).html(`
     <div style="white-space: pre-wrap; word-wrap: break-word;">
-        ${escapeHTML(data.response)}
+        ${escapeHTML(data.response.replace(/\*\*/g, ""))}
     </div>
     <br>
     <small>${str_time}</small>

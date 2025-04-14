@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>IST 256 Chatbot</title>
+  <title>IST 256 Chatbot (Web Programming)</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://kit.fontawesome.com/a076d05399.js"></script>
@@ -193,9 +193,11 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
 <!-- Chat UI -->
 <div class="chat-container">
   <div class="chat-header">
-    <img src="{{ url_for('static', filename='new-logo.png') }}" alt="Logo">
+    <a href="https://sites.google.com/site/danusn" target="_blank">
+      <img src="{{ url_for('static', filename='ReSENSE_Lab.png') }}" alt="Logo">
+    </a>
     <div>
-      <h5>IST 256 Chatbot</h5>
+      <h5>IST 256 Chatbot (Web Programming)</h5>
       <p>Ask me anything about the course!</p>
     </div>
   </div>
@@ -204,7 +206,11 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
 
   <div class="chat-footer">
     <input type="text" id="userInput" placeholder="Type your message..." required>
-    <button id="send"><i class="fas fa-arrow-up"></i></button>
+    <button id="send">
+      <svg viewBox="0 0 24 24">
+        <path d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8-8 8z" />
+      </svg>
+    </button>
   </div>
 
   <div class="typing-indicator">Chatbot is typing...</div>

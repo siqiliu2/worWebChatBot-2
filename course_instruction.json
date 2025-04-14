@@ -1,0 +1,53 @@
+{
+  "grading_breakdown": {
+    "Introduction Assignments": 5,
+    "Solo Lab Exercises": 50,
+    "Group Work Exercises": 45,
+    "TOTAL": 100
+  },
+  "grading_scale": {
+    "A": 93,
+    "A-": 90,
+    "B+": 87,
+    "B": 83,
+    "B-": 80,
+    "C+": 77,
+    "C": 70,
+    "D": 60,
+    "F": 0
+  },
+  "late_policy": {
+    "daily_penalty_percent": 5,
+    "max_days": 20,
+    "example": "75% score - 3 days late = 60% final score"
+  },
+  "Course Policies and Expectations": {
+    "canvas_login": "Students are expected to login regularly to check for course updates, announcements, emails, discussions, etc.",
+    "email_communication": "Students are expected to use Canvas for all course email communication.",
+    "virtual_meetings": "Students are expected to use specified virtual meeting tool(s) for collaboration, meetings, presentations, etc., as needed."
+  },
+  "emergency_notifications": {
+    "psualert": "PSUAlert is available at https://psualert.psu.eduLinks to an external site.. PSUAlert is Penn State’s emergency notification system for students, faculty and staff. The system will be used to alert members of Penn State’s campus communities of emergencies, campus closings and other urgent information. Using this portal, students, faculty and staff can choose to receive PSUAlert messages by text message, voice message and e‑mail. We recommend that students enroll in this system."
+  },
+  "academic_integrity": {
+    "summary": "Penn State and the College of Information Sciences and Technology are committed to maintaining Penn State's policy on Academic IntegrityLinks to an external site. in this and all other courses. We take academic integrity matters seriously and expect you to become a partner to the University/College standards of academic excellence. While utilizing additional sources outside of this class is encouraged for gaining a better understanding of course concepts, seeking explicit answers for graded assignments from outside sources (e.g. Course Hero, Chegg, tutoring services like tutor.com, etc.) is considered CHEATING and will not be tolerated. Sanctions range from failure of the assignment or course to dismissal from the University. Additionally, sharing course content without permission is a violation of copyright and may result in university sanctions and/or legal ramifications. Contact your instructor with questions related to this topic. ",
+    "resources": [
+      "https://www.worldcampus.psu.edu/about-us/academic-integrity",
+      "https://ist.psu.edu/current/resources/academic-integrity"
+    ]
+  },
+  "University Policies": "Review current information regarding various Penn State policies (such as copyright, counseling, psychological services, disability and military accommodations, discrimination, harassment, emergencies, trade names, etc.) on the University PoliciesLinks to an external site. page. Penn State takes great pride to foster a diverse and inclusive environment for students, faculty, and staff. Acts of intolerance, discrimination, or harassment due to age, ancestry, color, disability, gender, gender identity, national origin, race, religious belief, sexual orientation, or veteran status are not tolerated and can be reported through Educational Equity via the Report Bias webpageLinks to an external site. (http://equity.psu.edu/reportbias/)",
+
+  "schedule": [
+    "Lesson 01: HTML",
+    "Lesson 02: CSS",
+    "Lesson 03: DOM/BOM",
+    "Lesson 04: Bootstrap",
+    "Lesson 05: JavaScript",
+    "Lesson 06: Debugging and JSON",
+    "Lesson 07: jQuery",
+    "Lesson 08: AJAX",
+    "Lesson 09 + 10: Angular, NPM, Express, MongoDB",
+    "Lesson 11 + 12: Full Web Stack"
+  ]
+}

@@ -179,17 +179,6 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
   </div>
 </div>
 
-<!-- Email Prompt Modal -->
-<div class="modal" id="emailModal" tabindex="-1" style="display: none; background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content p-4">
-      <h5>Enter your email to start chatting</h5>
-      <input type="email" id="userEmail" class="form-control my-2" placeholder="you@example.com" required>
-      <button id="startChat" class="btn btn-primary">Start Chat</button>
-    </div>
-  </div>
-</div>
-
 <!-- Chat UI -->
 <div class="chat-container">
   <div class="chat-header">
@@ -217,58 +206,36 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
 </div>
 
 <script>
-  let userEmail = null;
+  let userEmail = "{{ email }}";
 
-  // Restore your escapeHTML function
   function escapeHTML(str) {
     return str.replace(/&/g, "&amp;")
               .replace(/</g, "&lt;")
               .replace(/>/g, "&gt;");
   }
 
-  // Enable 'I Agree' when checkbox is selected
   $("#agreeCheckbox").change(function () {
     $("#acceptTermsBtn").prop("disabled", !this.checked);
   });
 
-  // On Agree → Show email input
   $("#acceptTermsBtn").click(function () {
     $("#termsModal").hide();
-    $("#emailModal").show();
-  });
-
-  // On email submission
-  $("#startChat").click(function () {
-    const emailInput = $("#userEmail").val().trim();
-    if (emailInput === "") return;
-
-    userEmail = emailInput;
-
-    $.ajax({
-      type: "POST",
-      url: "/start",
-      data: JSON.stringify({ email: userEmail }),
-      contentType: "application/json",
-      success: function () {
-        $("#emailModal").hide();
-        $(".chat-container").show();
-      }
-    });
+    $(".chat-container").show();
   });
 
   function scrollToBottom() {
-    var chatBody = document.getElementById("messageContainer");
+    const chatBody = document.getElementById("messageContainer");
     chatBody.scrollTop = chatBody.scrollHeight;
   }
 
   function sendMessage() {
-    var userMessage = $("#userInput").val().trim();
-    if (userMessage === "") return;
+    const userMessage = $("#userInput").val().trim();
+    if (!userMessage) return;
 
-    var str_time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const str_time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-    var $userMsgDiv = $("<div>", { class: "text-end" });
-    var $userMsgContainer = $("<div>", { class: "message user-message" }).text(userMessage);
+    const $userMsgDiv = $("<div>", { class: "text-end" });
+    const $userMsgContainer = $("<div>", { class: "message user-message" }).text(userMessage);
     $userMsgContainer.append($("<br>")).append($("<small>").text(str_time));
     $userMsgDiv.append($userMsgContainer);
     $("#messageContainer").append($userMsgDiv);
@@ -284,14 +251,14 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
       contentType: "application/json",
       success: function (data) {
         $(".typing-indicator").hide();
-        var $botMsgDiv = $("<div>", { class: "text-start" });
-        var $botMsgContainer = $("<div>", { class: "message bot-message" }).html(`
-    <div style="white-space: pre-wrap; word-wrap: break-word;">
-        ${escapeHTML(data.response.replace(/\*\*/g, ""))}
-    </div>
-    <br>
-    <small>${str_time}</small>
-`);
+        const $botMsgDiv = $("<div>", { class: "text-start" });
+        const $botMsgContainer = $("<div>", { class: "message bot-message" }).html(`
+          <div style="white-space: pre-wrap; word-wrap: break-word;">
+              ${escapeHTML(data.response.replace(/\*\*/g, ""))}
+          </div>
+          <br>
+          <small>${str_time}</small>
+        `);
         $botMsgDiv.append($botMsgContainer);
         $("#messageContainer").append($botMsgDiv);
         scrollToBottom();

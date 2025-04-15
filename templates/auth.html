@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chatbot Login / Register</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input, button {
+      width: 100%;
+      margin: 10px 0;
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .switch {
+      text-align: center;
+      margin-top: 15px;
+    }
+    .switch a {
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .switch a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="form-title">Login</h2>
+    <form id="auth-form">
+      <input type="email" id="email" placeholder="Email" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+      <div class="switch">
+        <span id="toggle-text">Don't have an account? <a onclick="toggleForm()">Register</a></span>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let isLogin = true;
+
+    function toggleForm() {
+      isLogin = !isLogin;
+      const title = document.getElementById('form-title');
+      const button = document.querySelector('button');
+      const toggleText = document.getElementById('toggle-text');
+
+      if (isLogin) {
+        title.textContent = 'Login';
+        button.textContent = 'Login';
+        toggleText.innerHTML = `Don't have an account? <a onclick="toggleForm()">Register</a>`;
+      } else {
+        title.textContent = 'Register';
+        button.textContent = 'Register';
+        toggleText.innerHTML = `Already have an account? <a onclick="toggleForm()">Login</a>`;
+      }
+    }
+
+    document.getElementById('auth-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      const payload = { email, password, action: isLogin ? 'login' : 'register' };
+
+      const res = await fetch('/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        alert(data.message);
+        window.location.href = '/';
+      } else {
+        alert(data.message);
+      }
+    });
+  </script>
+</body>
+</html>

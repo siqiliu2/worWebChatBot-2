@@ -1,9 +1,9 @@
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import uuid
 import hashlib
+import mysql.connector
 from db import create_user_if_not_exists, save_chat_log
 from chatb import get_chat_response
-import mysql.connector
 
 app = Flask(__name__)
 app.secret_key = "your-secret-key"  # Replace with a secure key
@@ -14,19 +14,19 @@ def assign_session():
     if "session_id" not in session:
         session["session_id"] = str(uuid.uuid4())
 
-# 2. Only show chatbot if logged in
+# 2. Root route → redirect to /auth unless logged in
 @app.route("/")
 def index():
     if "email" not in session:
         return redirect(url_for("auth_page"))
     return render_template("index.html", email=session["email"])
 
-# 3. Auth UI (login/register)
+# 3. Show login/register UI
 @app.route("/auth")
 def auth_page():
     return render_template("auth.html")
 
-# 4. Auth logic
+# 4. Handle login/register POST
 @app.route("/auth", methods=["POST"])
 def handle_auth():
     data = request.get_json()
@@ -54,7 +54,7 @@ def handle_auth():
         conn.commit()
         session["email"] = email
         return jsonify(success=True, message="Registered successfully.")
-    
+
     elif action == "login":
         cursor.execute("""
             SELECT * FROM accounts WHERE email = %s AND password_hash = %s
@@ -67,13 +67,13 @@ def handle_auth():
 
     return jsonify(success=False, message="Invalid action.")
 
-# 5. Logout
+# 5. Logout route
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("auth_page"))
 
-# 6. Called when email modal is submitted in chatbot (can be skipped if using login)
+# 6. Optional: used for legacy email submission (can be skipped now)
 @app.route("/start", methods=["POST"])
 def start():
     email = request.json.get("email")
@@ -83,7 +83,7 @@ def start():
     print(f"📧 Email '{email}' associated with session '{session_id}'")
     return jsonify({"status": "started"})
 
-# 7. Chat endpoint
+# 7. Chat handler
 @app.route("/get", methods=["POST"])
 def chat():
     user_message = request.json["msg"]
@@ -93,6 +93,7 @@ def chat():
     save_chat_log(session_id, user_message, bot_response, email)
     return jsonify({"response": bot_response})
 
+# 8. Start server with a styled banner
 if __name__ == "__main__":
     print("\033[1;31m\n🔥 Flask Web UI running at: http://127.0.0.1:5000/auth\033[0m")
     app.run(debug=True, use_reloader=False)

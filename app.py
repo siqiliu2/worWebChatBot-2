@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 import uuid
 import hashlib
 import mysql.connector
-from db import create_user_if_not_exists, save_chat_log
+from db import create_user_if_not_exists, save_chat_log, get_chat_history
 from chatb import get_chat_response
 
 app = Flask(__name__)
@@ -19,7 +19,9 @@ def assign_session():
 def index():
     if "email" not in session:
         return redirect(url_for("auth_page"))
-    return render_template("index.html", email=session["email"])
+
+    chat_history = get_chat_history(session["email"])
+    return render_template("index.html", email=session["email"], history=chat_history)
 
 # 3. Show login/register UI
 @app.route("/auth")

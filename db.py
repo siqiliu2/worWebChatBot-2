@@ -32,3 +32,15 @@ def save_chat_log(session_id, user_message, bot_response, email):
     conn.commit()
     cursor.close()
     conn.close()
+
+def get_chat_history(email):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT user_message, bot_response FROM chat_sessions
+        WHERE email = %s ORDER BY id ASC
+    """, (email,))
+    history = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return history

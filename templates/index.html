@@ -191,7 +191,21 @@ You’re invited to test IST256 Chatbot!, an AI-powered chatbot designed to assi
     </div>
   </div>
 
-  <div id="messageContainer" class="chat-body"></div>
+  <div id="messageContainer" class="chat-body">
+    {% if history %}
+      <div class="text-center text-muted mb-2">Previous Conversations</div>
+      {% for user_msg, bot_msg in history %}
+        <div class="text-end">
+          <div class="message user-message">{{ user_msg }}<br><small>Previous</small></div>
+        </div>
+        <div class="text-start">
+          <div class="message bot-message">{{ bot_msg }}<br><small>Previous</small></div>
+        </div>
+      {% endfor %}
+      <hr>
+    {% endif %}
+  </div>
+  
 
   <div class="chat-footer">
     <input type="text" id="userInput" placeholder="Type your message..." required>

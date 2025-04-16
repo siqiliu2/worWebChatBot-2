@@ -37,10 +37,11 @@ def get_chat_history(email):
     conn = get_connection()
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT user_message, bot_response FROM chat_sessions
+        SELECT user_message, bot_response, timestamp FROM chat_sessions
         WHERE email = %s ORDER BY id ASC
     """, (email,))
     history = cursor.fetchall()
     cursor.close()
     conn.close()
     return history
+

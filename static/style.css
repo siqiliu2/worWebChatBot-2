@@ -120,3 +120,28 @@ body {
   margin-top: 4px;
 }
 
+
+
+/* Mobile responsiveness fixes */
+@media (max-width: 576px) {
+  .card {
+    height: auto;
+    margin: 10px;
+  }
+
+  .msg_card_body {
+    height: auto;
+    max-height: 60vh;
+  }
+
+  .msg_cotainer,
+  .msg_cotainer_send {
+    max-width: 100%;
+    font-size: 0.95rem;
+  }
+
+  .msg_head {
+    flex-direction: column;
+    text-align: center;
+  }
+}

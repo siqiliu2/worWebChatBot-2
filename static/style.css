@@ -5,7 +5,7 @@ body {
 }
 
 .chat {
-  height: 100vh; /* Full screen height */
+  height: calc(var(--vh, 1vh) * 100); /* Full screen height */
   display: flex;
   align-items: center;
   justify-content: center;

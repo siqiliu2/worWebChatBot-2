@@ -146,17 +146,26 @@ body {
   }
 
 
-  pre code {
-    background-color: #f4f4f4;
-    border-radius: 6px;
-    padding: 12px;
-    font-family: 'Courier New', monospace;
-    font-size: 14px;
-    display: block;
-    white-space: pre-wrap;
-    overflow-x: auto;
-    line-height: 1.5;
-  }
+/* Clean, readable code block for light theme */
+pre code {
+  background-color: #f5f5f5;         /* light grey for contrast */
+  color: #2d2d2d;                    /* dark text */
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  display: block;
+  white-space: pre-wrap;
+  overflow-x: auto;
+  line-height: 1.5;
+}
+
+/* Optional: make .bot-message not gray out everything */
+.bot-message {
+  background-color: #ffffff !important;
+  color: #333;
+}
   
   
   

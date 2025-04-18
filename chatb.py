@@ -8,6 +8,8 @@ from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from db import save_chat_log
 import html
+import re
+
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -16,10 +18,51 @@ if not openai_api_key:
 
 print(os.getenv("OPENAI_API_KEY"))
 
-def format_code_response(text):
-    import html
-    escaped = html.escape(text.strip())
-    return escaped  # No <pre><code>, no ```
+def format_code_response(code, language="html"):
+    """
+    Formats code into a PrismJS-compatible <pre><code> block.
+    Automatically escapes the HTML.
+    """
+    return f'<pre><code class="language-{language}">{html.escape(code.strip())}</code></pre>'
+
+
+def convert_code_blocks(text):
+    """
+    Converts:
+    - ```html\n...\n``` style blocks into proper <pre><code> blocks
+    - `inline` backtick content into <code>inline</code>
+    Escapes all other HTML to avoid rendering issues.
+    """
+
+    # Step 1: Extract code blocks and replace with placeholders
+    code_blocks = []
+
+    def replace_block(match):
+        lang = match.group(1) or "html"
+        code = match.group(2)
+        placeholder = f"__CODEBLOCK{len(code_blocks)}__"
+        code_blocks.append(format_code_response(code, lang))
+        return placeholder
+
+    block_pattern = r"```(html|css|javascript)?\n(.*?)```"
+    text_with_placeholders = re.sub(block_pattern, replace_block, text, flags=re.DOTALL)
+
+    # Step 2: Escape all other HTML
+    escaped = html.escape(text_with_placeholders)
+
+    # Step 3: Restore actual code blocks
+    for i, block in enumerate(code_blocks):
+        escaped = escaped.replace(f"__CODEBLOCK{i}__", block)
+
+    # Step 4: Convert `inline` code to <code> tags
+    inline_pattern = r"`([^`\n]+)`"
+    escaped = re.sub(inline_pattern, r"<code>\\1</code>", escaped)
+
+    return escaped
+
+
+
+
 
 
 
@@ -205,8 +248,8 @@ def get_chat_response(user_question, session_id, email):
     else:
         response = "I'm here to help with web development topics. Could you ask something related to HTML, CSS, or frontend development?"
 
-    if any(sym in response for sym in ["<", ">", "{", "}", "=", ";", "function", "const", "let", "def", "</", "```"]):
-        response = format_code_response(response)
+    response = convert_code_blocks(response)
+
 
 
     save_chat_log(session_id, user_question, response, email)

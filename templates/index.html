@@ -25,14 +25,15 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      max-width: 500px;
-      width: 100%;
-      margin: 0 auto;
+      width: 95%;
+      max-width: 900px; /* increased from 500px */
+      margin: 20px auto;
       background: #fff;
       border-radius: 10px;
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-      height: 100vh;
+      height: 90vh; /* slightly less than full to avoid overflow on some devices */
     }
+
 
     .chat-header {
       background: #1d417d;
@@ -201,6 +202,14 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
 <script>
   const userEmail = "{{ email }}";
 
+  function setVhUnit() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+
+  setVhUnit();
+  window.addEventListener('resize', setVhUnit);
+
   $("#agreeCheckbox").change(function () {
     $("#acceptTermsBtn").prop("disabled", !this.checked);
   });
@@ -243,16 +252,14 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
       success: function (data) {
         $(".typing-indicator").hide();
         
-        const highlighted = data.response.replace(/<pre><code>(.*?)<\/code><\/pre>/gs, (match, p1) => {
-          return `<pre><code class="language-html">${p1}</code></pre>`;
-        });
+        const highlighted = data.response; 
+
 
         const botReply = `<div class="message bot-message">${highlighted}<div class="timestamp">${time}</div></div>`;
-
-
-        
         $(".typing-indicator").before(botReply);
+        Prism.highlightAll();
         scrollToBottom();
+
       }
     });
   }

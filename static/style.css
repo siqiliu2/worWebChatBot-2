@@ -3,7 +3,9 @@ body {
   margin: 0;
   padding: 0;
 }
-
+html, body {
+  overflow-x: hidden;
+}
 .chat {
   height: calc(var(--vh, 1vh) * 100); /* Full screen height */
   display: flex;

@@ -235,7 +235,7 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
       contentType: "application/json",
       success: function (data) {
         $(".typing-indicator").hide();
-        const botReply = `<div class="message bot-message">${escapeHTML(data.response)}<div class="timestamp">${time}</div></div>`;
+        const botReply = `<div class="message bot-message"><pre><code>${data.response}</code></pre><div class="timestamp">${time}</div></div>`;
         $(".typing-indicator").before(botReply);
         scrollToBottom();
       }

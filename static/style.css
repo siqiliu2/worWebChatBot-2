@@ -144,4 +144,22 @@ body {
     flex-direction: column;
     text-align: center;
   }
+
+
+  pre code {
+    background-color: #f4f4f4;
+    border-radius: 6px;
+    padding: 12px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    display: block;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    line-height: 1.5;
+  }
+  
+  
+  
+  
+  
 }

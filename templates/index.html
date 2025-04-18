@@ -182,7 +182,7 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
       {% for user_msg, bot_msg, ts in history %}
         <div class="chat-message">
           <div class="user"><strong>You:</strong> {{ user_msg }}</div>
-          <div class="bot"><strong>Bot:</strong> {{ bot_msg }}</div>
+          <div class="bot"><strong>Bot:</strong> {{ bot_msg|safe }}</div>
           <div class="timestamp text-muted small">🕒 {{ ts.strftime('%B %d, %Y at %I:%M %p') }}</div>
         </div>
       {% endfor %}

@@ -19,22 +19,36 @@ if not openai_api_key:
 print(os.getenv("OPENAI_API_KEY"))
 
 def format_code_response(code, language="html"):
-    """
-    Formats code into a PrismJS-compatible <pre><code> block.
-    Automatically escapes the HTML.
-    """
-    return f'<pre><code class="language-{language}">{html.escape(code.strip())}</code></pre>'
+    escaped_code = html.escape(code.strip())  
+    return f'<pre><code class="language-{language}">{escaped_code}</code></pre>'
+
+
+
+def format_explanation_text(text):
+    # Convert markdown-style numbered lists to HTML lists
+    text = re.sub(r'(?<!\d)(\d+)\.\s+(.*)', r'<li>\2</li>', text)
+    if "<li>" in text:
+        text = f"<ol>{text}</ol>"
+
+    # Convert markdown-style bullets to HTML
+    text = re.sub(r'-\s+(.*)', r'<li>\1</li>', text)
+    if "<li>" in text and "<ol>" not in text:
+        text = f"<ul>{text}</ul>"
+
+    # Replace headings like ### Title
+    text = re.sub(r'###\s+(.*)', r'<h3>\1</h3>', text)
+
+    return text
+
 
 
 def convert_code_blocks(text):
     """
     Converts:
-    - ```html\n...\n``` style blocks into proper <pre><code> blocks
-    - `inline` backtick content into <code>inline</code>
-    Escapes all other HTML to avoid rendering issues.
+    - ```html\n...\n``` blocks to <pre><code>
+    - `inline` to <code>inline</code>
+    - Escapes all other HTML to avoid rendering issues
     """
-
-    # Step 1: Extract code blocks and replace with placeholders
     code_blocks = []
 
     def replace_block(match):
@@ -44,21 +58,23 @@ def convert_code_blocks(text):
         code_blocks.append(format_code_response(code, lang))
         return placeholder
 
+    # Match code blocks
     block_pattern = r"```(html|css|javascript)?\n(.*?)```"
     text_with_placeholders = re.sub(block_pattern, replace_block, text, flags=re.DOTALL)
 
-    # Step 2: Escape all other HTML
+    # Escape other HTML
     escaped = html.escape(text_with_placeholders)
 
-    # Step 3: Restore actual code blocks
+    # Convert inline backtick code
+    inline_code_pattern = r'`([^`]+)`'
+    escaped = re.sub(inline_code_pattern, r'<code>\1</code>', escaped)
+
+    # Restore code blocks
     for i, block in enumerate(code_blocks):
         escaped = escaped.replace(f"__CODEBLOCK{i}__", block)
 
-    # Step 4: Convert `inline` code to <code> tags
-    inline_pattern = r"`([^`\n]+)`"
-    escaped = re.sub(inline_pattern, r"<code>\\1</code>", escaped)
-
     return escaped
+
 
 
 
@@ -248,9 +264,9 @@ def get_chat_response(user_question, session_id, email):
     else:
         response = "I'm here to help with web development topics. Could you ask something related to HTML, CSS, or frontend development?"
 
-    response = convert_code_blocks(response)
+    formatted_response = convert_code_blocks(response)
+    formatted_response = format_explanation_text(formatted_response)
 
 
-
-    save_chat_log(session_id, user_question, response, email)
-    return response
+    save_chat_log(session_id, user_question, formatted_response, email)
+    return formatted_response

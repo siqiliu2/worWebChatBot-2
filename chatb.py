@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
 from db import save_chat_log
+import html
 
 load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
@@ -14,6 +15,13 @@ if not openai_api_key:
     raise ValueError("OpenAI API Key is missing! Set it in the .env file.")
 
 print(os.getenv("OPENAI_API_KEY"))
+
+def format_code_response(text):
+    import html
+    escaped = html.escape(text.strip())
+    return escaped  # No <pre><code>, no ```
+
+
 
 # --- Load syllabus, group project assignment and course instruction ---
 def load_syllabus(file_path):
@@ -196,6 +204,10 @@ def get_chat_response(user_question, session_id, email):
 
     else:
         response = "I'm here to help with web development topics. Could you ask something related to HTML, CSS, or frontend development?"
+
+    if any(sym in response for sym in ["<", ">", "{", "}", "=", ";", "function", "const", "let", "def", "</", "```"]):
+        response = format_code_response(response)
+
 
     save_chat_log(session_id, user_question, response, email)
     return response

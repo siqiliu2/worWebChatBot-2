@@ -10,128 +10,112 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
 
+  <!-- Bootstrap & jQuery -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
   <style>
     body, html {
-      margin: 0;
-      padding: 0;
-      height: 100%;
+      margin: 0; padding: 0; height: 100%;
       background: linear-gradient(to right, #1d417d, #4a90e2);
     }
-
     .chat-container {
-      display: flex;
-      flex-direction: column;
-      width: 95%;
-      max-width: 900px;
+      display: flex; flex-direction: column;
+      width: 95%; max-width: 900px;
       margin: 20px auto;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+      background: #fff; border-radius: 10px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
       height: 90vh;
     }
-
     .chat-header {
-      background: #1d417d;
-      color: #fff;
-      padding: 15px;
-      display: flex;
-      align-items: center;
-      border-top-left-radius: 10px;
-      border-top-right-radius: 10px;
+      background: #1d417d; color: #fff;
+      padding: 15px; display: flex; align-items: center;
+      border-top-left-radius: 10px; border-top-right-radius: 10px;
     }
-
     .chat-header img {
-      width: 60px;
-      height: 60px;
-      margin-right: 15px;
+      width: 60px; height: 60px; margin-right: 15px;
     }
-
     .chat-body {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      flex-grow: 1; overflow-y: auto;
+      padding: 15px; display: flex;
+      flex-direction: column; gap: 10px;
     }
-
     .chat-footer {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-top: 1px solid #ddd;
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px; border-top: 1px solid #ddd;
       background: #fff;
     }
-
     .chat-footer input[type="text"] {
-      flex: 1;
-      padding: 10px 15px;
-      border-radius: 25px;
-      border: 1px solid #ccc;
+      flex: 1; padding: 10px 15px;
+      border-radius: 25px; border: 1px solid #ccc;
       font-size: 1rem;
     }
-
     .chat-footer button {
-      background-color: #1d417d;
-      color: #fff;
-      border: none;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      font-size: 1.2rem;
-      display: flex;
-      justify-content: center;
+      background-color: #1d417d; color: #fff;
+      border: none; border-radius: 50%;
+      width: 40px; height: 40px;
+      display: flex; justify-content: center;
       align-items: center;
     }
-
     .message {
-      max-width: 80%;
-      padding: 10px 15px;
+      max-width: 80%; padding: 10px 15px;
       border-radius: 10px;
       font-size: 0.95rem;
       line-height: 1.4;
       word-break: break-word;
       display: inline-block;
     }
-
     .user-message {
       align-self: flex-end;
-      background-color: #007bff;
-      color: white;
+      background-color: #007bff; color: #fff;
       border-bottom-right-radius: 0;
     }
-
     .bot-message {
       align-self: flex-start;
-      background-color: #f1f1f1;
-      color: #333;
+      background-color: #f1f1f1; color: #333;
       border-bottom-left-radius: 0;
     }
-
     .timestamp {
-      font-size: 0.75rem;
-      color: #999;
+      font-size: 0.75rem; color: #999;
       margin-top: 5px;
     }
-
     .typing-indicator {
-      font-size: 0.85rem;
-      color: #666;
+      font-size: 0.85rem; color: #666;
       padding-left: 5px;
+    }
+
+    /* Overview modal overlay */
+    .overview-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    .overview-content {
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px;
+      max-width: 90%;
+      max-height: 90%;
+      overflow-y: auto;
+      position: relative;
+    }
+    .overview-content .btn-close {
+      position: absolute; top: 10px; right: 10px;
     }
   </style>
 </head>
 <body>
-<!-- Terms Modal -->
-<div class="modal" id="termsModal" tabindex="-1" style="display: block; background-color: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content p-4">
-      <h4 class="mb-3">Terms and Conditions</h4>
-      <div class="mb-3" style="font-size: 0.95rem; white-space: pre-wrap;">
+  <!-- Terms & Conditions Modal -->
+  <div class="modal" id="termsModal" tabindex="-1" style="display:block; background:rgba(0,0,0,0.5);">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content p-4">
+        <h4 class="mb-3">Terms and Conditions</h4>
+        <div class="mb-3" style="font-size:0.95rem; white-space:pre-wrap;">
 Welcome to IST256 Chatbot!
 
 You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assist you with your web development coursework at Penn State University. Before you start, please read and agree to these terms.
@@ -146,146 +130,196 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
   - For research only, securely stored, anonymized in reports.
 
 4. Your Rights
-  - Stop anytime. Contact dvs6298@psu.edu to see/delete data.
+  - Stop anytime. Contact dvs6298@psu.edu to see or delete your data.
 
 5. Disclaimer
   - GPT-based, for educational use only.
 
 6. By clicking “I Agree”, you confirm:
-  - You're 18+, a Penn State student, and agree to the above terms.
-      </div>
-      <div class="form-check mb-3">
-        <input class="form-check-input" type="checkbox" id="agreeCheckbox">
-        <label class="form-check-label" for="agreeCheckbox">
-          I have read and agree to the Terms and Conditions.
-        </label>
-      </div>
-      <button id="acceptTermsBtn" class="btn btn-primary" disabled>I Agree</button>
-    </div>
-  </div>
-</div>
-
-<!-- Chat Interface -->
-<div class="chat-container" style="display:none;">
-  <div class="chat-header">
-    <img src="{{ url_for('static', filename='ReSENSE_Lab.png') }}" alt="Logo">
-    <div>
-      <h5 class="m-0">IST 256 Chatbot</h5>
-      <p class="m-0 small">Ask me anything about the course!</p>
-    </div>
-  </div>
-
-  <div id="messageContainer" class="chat-body">
-    {% if history %}
-      {% for user_msg, bot_msg, ts in history %}
-        <div class="chat-message">
-          <div class="user"><strong>You:</strong> {{ user_msg }}</div>
-          <div class="bot"><strong>Bot:</strong> {{ bot_msg|safe }}</div>
-          <div class="timestamp text-muted small">🕒 {{ ts.strftime('%B %d, %Y at %I:%M %p') }}</div>
+  - You’re 18+, a Penn State student, and agree to the above terms.
         </div>
-      {% endfor %}
-    {% endif %}
-    <div class="typing-indicator" style="display:none;">Chatbot is typing...</div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="agreeCheckbox">
+          <label class="form-check-label" for="agreeCheckbox">
+            I have read and agree to the Terms and Conditions.
+          </label>
+        </div>
+        <button id="acceptTermsBtn" class="btn btn-primary" disabled>I Agree</button>
+      </div>
+    </div>
   </div>
 
-  <div class="chat-footer">
-    <input type="text" id="userInput" placeholder="Type your message..." required>
-    <button id="send">
-      <svg viewBox="0 0 24 24" width="20" height="20">
-        <path fill="white" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
-      </svg>
-    </button>
+  <!-- Chat Interface -->
+  <div class="chat-container" style="display:none;">
+    <div class="chat-header">
+      <img src="{{ url_for('static', filename='ReSENSE_Lab.png') }}" alt="Logo">
+      <div>
+        <h5 class="m-0">IST 256 Chatbot</h5>
+        <p class="m-0 small">Ask me anything about the course!</p>
+      </div>
+    </div>
+
+    <div id="messageContainer" class="chat-body">
+      {% if history %}
+        {% for user_msg, bot_msg, ts in history %}
+          <div class="chat-message">
+            <div class="user"><strong>You:</strong> {{ user_msg }}</div>
+            <div class="bot"><strong>Bot:</strong> {{ bot_msg|safe }}</div>
+            <div class="timestamp text-muted small">
+              🕒 {{ ts.strftime('%B %d, %Y at %I:%M %p') }}
+            </div>
+          </div>
+        {% endfor %}
+      {% endif %}
+      <div class="typing-indicator" style="display:none;">Chatbot is typing...</div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="userInput" placeholder="Type your message..." required>
+      <button id="send">
+        <svg viewBox="0 0 24 24" width="20" height="20">
+          <path fill="white" d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="text-center my-3">
+      <button
+        id="overviewBtn"
+        class="btn btn-secondary me-2"
+        aria-controls="overviewOverlay"
+        aria-expanded="false"
+      >
+        Chatbot Overview
+      </button>
+      <a
+        href="https://pennstate.qualtrics.com/jfe/form/SV_42bt4cM0ZIRwado"
+        class="btn btn-primary"
+        target="_blank"
+        rel="noopener"
+        aria-label="Share your feedback (opens in a new tab)"
+      >
+        Share Your Feedback
+      </a>
+    </div>
+  </div> <!-- /.chat-container -->
+
+  <!-- Overview Modal Overlay -->
+  <div id="overviewOverlay" class="overview-overlay">
+    <div class="overview-content">
+      <button type="button" class="btn-close" id="overviewClose" aria-label="Close Overview"></button>
+      <h5>IST 256 Chatbot Overview</h5>
+      <h6>Purpose:</h6>
+      <p>
+        The chatbot is a tutor and assistant for IST 256 which can help you understand concepts,
+        guide you through assignments, and navigate the materials and syllabus. It doesn’t give
+        answers directly—rather, it leads you step by step with hints.
+      </p>
+      <h6>Capabilities:</h6>
+      <ul>
+        <li>Retrieve syllabus & class details (grading, deadlines, modules)</li>
+        <li>Assignment assistance</li>
+        <li>Explain web topics with examples (e.g., HTML lists)</li>
+      </ul>
+      <h6>Example Prompts:</h6>
+      <ul>
+        <li>“What does the syllabus say about grading criteria?”</li>
+        <li>“What is the policy on late submissions?”</li>
+        <li>“I’m confused how forms work.”</li>
+        <li>“Can you explain CSS basics?”</li>
+      </ul>
+      <h6>Best Practices:</h6>
+      <ul>
+        <li><strong>Be Direct:</strong> Ask clear, specific questions.</li>
+        <li><strong>Include Keywords:</strong> Helps find the right info.</li>
+        <li><strong>Follow Up:</strong> Ask more if you need details.</li>
+      </ul>
+    </div>
   </div>
 
-  <div class="text-center my-3">
-    <a
-      href="https://pennstate.qualtrics.com/jfe/form/SV_42bt4cM0ZIRwado"
-      class="btn btn-primary"
-      target="_blank"
-      rel="noopener"
-      aria-label="Share your feedback (opens in a new tab)"
-    >
-      Share Your Feedback
-    </a>
-  </div>
-</div> <!-- end .chat-container -->
+  <script>
+    const userEmail = "{{ email }}";
 
-<script>
-  const userEmail = "{{ email }}";
+    // adjust CSS vh unit for mobile
+    function setVhUnit() {
+      let vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    }
+    setVhUnit();
+    window.addEventListener('resize', setVhUnit);
 
-  function setVhUnit() {
-    let vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  }
+    // Terms & Conditions modal logic
+    $("#agreeCheckbox").change(function(){
+      $("#acceptTermsBtn").prop("disabled", !this.checked);
+    });
+    $("#acceptTermsBtn").click(function(){
+      $("#termsModal").hide();
+      $(".chat-container").show();
+    });
 
-  setVhUnit();
-  window.addEventListener('resize', setVhUnit);
+    // HTML-escape utility
+    function escapeHTML(str) {
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+    }
 
-  $("#agreeCheckbox").change(function () {
-    $("#acceptTermsBtn").prop("disabled", !this.checked);
-  });
+    // scroll chat to bottom
+    function scrollToBottom(){
+      const c = document.getElementById("messageContainer");
+      c.scrollTop = c.scrollHeight;
+    }
 
-  $("#acceptTermsBtn").click(function () {
-    $("#termsModal").hide();
-    $(".chat-container").show();
-  });
+    // send user message & handle bot reply
+    function sendMessage(){
+      const ui = $("#userInput");
+      const text = ui.val().trim();
+      if (!text) return;
+      const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
 
-  function escapeHTML(str) {
-    return str.replace(/&/g, "&amp;")
-              .replace(/</g, "&lt;")
-              .replace(/>/g, "&gt;");
-  }
+      // show user message
+      const userHtml = `<div class="message user-message">${escapeHTML(text)}<div class="timestamp">${time}</div></div>`;
+      $(".typing-indicator").before(userHtml);
+      ui.val("");
+      scrollToBottom();
 
-  function scrollToBottom() {
-    const container = document.getElementById("messageContainer");
-    container.scrollTop = container.scrollHeight;
-  }
+      // show typing
+      $(".typing-indicator").show();
 
-  function sendMessage() {
-    const userInput = $("#userInput");
-    const message = userInput.val().trim();
-    if (!message) return;
+      $.ajax({
+        type: "POST",
+        url: "/get",
+        data: JSON.stringify({ msg: text, email: userEmail }),
+        contentType: "application/json",
+        success: function(data){
+          $(".typing-indicator").hide();
+          const reply = data.response;
+          const botHtml = `<div class="message bot-message">${reply}<div class="timestamp">${time}</div></div>`;
+          $(".typing-indicator").before(botHtml);
+          Prism.highlightAll();
+          scrollToBottom();
+        }
+      });
+    }
 
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-    const userMsg = `<div class="message user-message">${escapeHTML(message)}<div class="timestamp">${time}</div></div>`;
-    $(".typing-indicator").before(userMsg);
-    userInput.val("");
-    scrollToBottom();
-
-    $(".typing-indicator").show();
-
-    $.ajax({
-      type: "POST",
-      url: "/get",
-      data: JSON.stringify({ msg: message, email: userEmail }),
-      contentType: "application/json",
-      success: function (data) {
-        $(".typing-indicator").hide();
-        const highlighted = data.response;
-        const botReply = `<div class="message bot-message">${highlighted}<div class="timestamp">${time}</div></div>`;
-        $(".typing-indicator").before(botReply);
-        Prism.highlightAll();
-        scrollToBottom();
+    $("#send").click(sendMessage);
+    $("#userInput").keypress(function(e){
+      if(e.which === 13){
+        e.preventDefault();
+        sendMessage();
       }
     });
-  }
 
-  $("#send").click(sendMessage);
-  $("#userInput").keypress(function (e) {
-    if (e.which === 13) {
-      e.preventDefault();
-      sendMessage();
-    }
-  });
-
-  function adjustHeight() {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty("--vh", `${vh}px`);
-  }
-
-  window.addEventListener("resize", adjustHeight);
-  window.addEventListener("load", adjustHeight);
-</script>
+    // open overview modal
+    $("#overviewBtn").click(function(){
+      $("#overviewOverlay").fadeIn(200);
+      $(this).attr("aria-expanded", "true");
+    });
+    // close overview modal
+    $("#overviewClose").click(function(){
+      $("#overviewOverlay").fadeOut(200);
+      $("#overviewBtn").attr("aria-expanded", "false");
+    });
+  </script>
 </body>
 </html>

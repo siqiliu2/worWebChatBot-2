@@ -75,7 +75,7 @@ def logout():
     session.clear()
     return redirect(url_for("auth_page"))
 
-# 6. Optional: used for legacy email submission (can be skipped now)
+# 6. Optional: legacy email submission endpoint
 @app.route("/start", methods=["POST"])
 def start():
     email = request.json.get("email")
@@ -92,7 +92,6 @@ def chat():
     session_id = session.get("session_id")
     email = session.get("email")
     bot_response = get_chat_response(user_message, session_id, email)
-    #save_chat_log(session_id, user_message, bot_response, email)
     return jsonify({"response": bot_response})
 
 # 8. Start server with a styled banner

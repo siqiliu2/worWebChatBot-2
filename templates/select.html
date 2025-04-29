@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Select Your Course</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="d-flex align-items-center justify-content-center" style="height:100vh; background:#f9f9f9;">
+  <div class="card p-4 text-center" style="max-width:400px; width:90%;">
+    <h2 class="mb-4">Which course?</h2>
+    <button id="btn-ist256" class="btn btn-primary w-100 mb-3">IST 256</button>
+    <button id="btn-hcdd340" class="btn btn-outline-secondary w-100">HCDD 340</button>
+  </div>
+
+  <script>
+    async function chooseCourse(course) {
+      const res = await fetch('/select', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ course })
+      });
+      const data = await res.json();
+      if (data.success) {
+        window.location.href = '/';
+      } else {
+        alert(data.message || 'Failed to set course.');
+      }
+    }
+    document.getElementById('btn-ist256')
+      .addEventListener('click', () => chooseCourse('ist256'));
+    document.getElementById('btn-hcdd340')
+      .addEventListener('click', () => chooseCourse('hcdd340'));
+  </script>
+</body>
+</html>

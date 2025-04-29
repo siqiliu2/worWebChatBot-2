@@ -172,13 +172,11 @@ pre code {
   }
 }
 
-/* ================================
-   Modal Styles for "Overview"
-   ================================ */
 
-/* full-screen dark overlay (hidden by default; set display:flex to open) */
+
+
 .overview-overlay {
-  display: none;             /* change to `flex` to show */
+  display: none;             
   position: fixed;
   top: 0;
   left: 0;
@@ -187,15 +185,14 @@ pre code {
   background: rgba(0,0,0,0.6);
   z-index: 1000;
 
-  /* flex centering */
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* the white “card” that sits in the center */
+
 .overview-content {
-  position: relative;        /* positioned by flex parent */
+  position: relative;        
   max-width: 600px;
   width: 90%;
   max-height: 90%;
@@ -206,7 +203,6 @@ pre code {
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* close button in the top-right corner of the card */
 .overview-content .btn-close {
   position: absolute;
   top: 10px;

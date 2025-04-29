@@ -267,7 +267,8 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
   </div>
 
   <script>
-    const userEmail = "{{ email }}";
+    const userEmail    = "{{ email }}";
+    const selectedCourse = "{{ course }}";   // ← either "ist256" or "hcdd340"
 
     // Adjust vh unit for mobile
     function setVhUnit() {
@@ -318,7 +319,11 @@ You’re invited to test IST256 Chatbot, an AI-powered chatbot designed to assis
       $.ajax({
         type: "POST",
         url: "/get",
-        data: JSON.stringify({ msg: text, email: userEmail }),
+        data: JSON.stringify({
+          msg:    text,
+          email:  userEmail,
+          course: selectedCourse
+        }),
         contentType: "application/json",
         success: function(data){
           $(".typing-indicator").hide();

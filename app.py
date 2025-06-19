@@ -47,11 +47,11 @@ def handle_auth():
     action = data["action"]
 
     conn = mysql.connector.connect(
-        host="db-mysql-nyc2-22288-do-user-20062837-0.j.db.ondigitalocean.com",
-        user="doadmin",
-        password="AVNS_6s5bhCmv-j-bYzP4_aJ",
-        database="defaultdb",
-        port=25060
+        host="Your DB hostname",
+        user="Your DB Username",
+        password="Your DB password",
+        database="Your Database Name",
+        port=Your DB PORT
     )
     cursor = conn.cursor()
 

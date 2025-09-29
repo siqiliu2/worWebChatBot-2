@@ -9,7 +9,7 @@ from collections import defaultdict, deque
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
-from db import save_chat_log
+from db import save_chat_log, has_session_history, has_email_course_history
 import html
 import re
 
@@ -211,7 +211,7 @@ def get_allowed_terms(course):
     return terms
 
 def is_general_response(query):
-    return query.lower() in ["yes", "no", "maybe", "okay", "sure", "thanks", "thank you"]
+    return query.lower() in ["hi", "hello", "hey", "yo", "sup", "help", "yes", "no", "maybe", "okay", "sure", "thanks", "thank you"]
 
 def extract_week_number(text):
     m = re.search(r"week\s*(\d+)", text.lower())
@@ -220,7 +220,7 @@ def extract_week_number(text):
 def is_query_allowed(query, course, session_id):
     if is_general_response(query):
         return True
-    if conversation_buffers.get(session_id):
+    if conversation_buffers.get(session_id) or has_session_history(session_id) or has_email_course_history(email, course):
         return True
     q_terms = _tokenize(query)
     allowed = get_allowed_terms(course)
@@ -307,6 +307,9 @@ Use short, clear explanations, include examples when helpful, and end with a bri
     formatted = format_explanation_text(formatted)
     save_chat_log(session_id, user_question, formatted, email, course)
     return formatted
+
+
+
 
 
 

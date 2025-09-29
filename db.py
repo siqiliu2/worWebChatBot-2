@@ -77,3 +77,38 @@ def get_chat_history(email, course=None):
     return history
 
 
+def has_session_history(session_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute(
+        "SELECT 1 FROM chat_sessions WHERE session_id = %s LIMIT 1",
+        (session_id,)
+    )
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return bool(row)
+
+def has_email_course_history(email, course=None):
+    conn = get_connection()
+    cursor = conn.cursor()
+    if course:
+        cursor.execute(
+            """
+            SELECT 1 FROM chat_sessions
+            WHERE email = %s AND (course = %s OR (course IS NULL AND %s = 'ist256'))
+            LIMIT 1
+            """,
+            (email, (course or '').lower(), (course or '').lower())
+        )
+    else:
+        cursor.execute(
+            "SELECT 1 FROM chat_sessions WHERE email = %s LIMIT 1",
+            (email,)
+        )
+    row = cursor.fetchone()
+    cursor.close()
+    conn.close()
+    return bool(row)
+
+

@@ -1,4 +1,4 @@
-# worWebChatBot-2/worWebChatBot-2/chatb.py
+﻿# worWebChatBot-2/worWebChatBot-2/chatb.py
 
 import openai
 from dotenv import load_dotenv
@@ -278,12 +278,12 @@ Use short, clear explanations, include examples when helpful, and end with a bri
         prompt = f"Here are the course instructions:\n{json.dumps(course_instruction, indent=2)}\n\nStudent: {user_question}"
         response = chain.invoke({"question": prompt})
         conversation_context["last_bot_message"] = response
-    elif is_query_allowed(user_question):
+    elif is_query_allowed(user_question, course, session_id):
         response = chain.invoke({"question": user_question})
         conversation_context["last_bot_message"] = response
     else:
         response = (
-        "I’m focused on this course’s syllabus and foundational basics. "
+        "Iâ€™m focused on this courseâ€™s syllabus and foundational basics. "
         "That question seems outside scope. Would you like to ask about a "
         "topic from the syllabus instead (e.g., one listed above)?"
     )
@@ -293,3 +293,4 @@ Use short, clear explanations, include examples when helpful, and end with a bri
     formatted = format_explanation_text(formatted)
     save_chat_log(session_id, user_question, formatted, email, course)
     return formatted
+

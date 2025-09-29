@@ -176,19 +176,39 @@ def get_allowed_topics(course):
         data = load_syllabus("syllabus.json")
     return _extract_topics_from_syllabus(data)
 
-def get_embedding(text):
-    client = openai.OpenAI(api_key=openai_api_key)
-    resp = client.embeddings.create(input=text, model="text-embedding-ada-002")
-    return np.array(resp.data[0].embedding)
+STOPWORDS = {
+    'the','a','an','and','or','of','in','to','for','on','at','by','with','from','is','are','be','as','that','this','it','its','into','about','your','you','we','our','their','they','i','he','she','them','his','her','was','were','will','can','could','should','would','may','might'
+}
 
-syllabus_embeddings_cache = {}
+allowed_terms_cache = {}
 
-def get_syllabus_embeddings(course):
-    course_key = course or "ist256"
-    if course_key not in syllabus_embeddings_cache:
-        topics = get_allowed_topics(course_key)
-        syllabus_embeddings_cache[course_key] = {t: get_embedding(t) for t in topics}
-    return syllabus_embeddings_cache[course_key]
+def _tokenize(text):
+    words = re.split(r"[^A-Za-z0-9_]+", str(text).lower())
+    return {w for w in words if len(w) >= 3 and w not in STOPWORDS}
+
+def get_allowed_terms(course):
+    key = (course or 'ist256').lower()
+    if key in allowed_terms_cache:
+        return allowed_terms_cache[key]
+    syllabus_file = 'hcdd340_syllabus.json' if key == 'hcdd340' else 'syllabus.json'
+    try:
+        data = load_syllabus(syllabus_file)
+    except (FileNotFoundError, ValueError):
+        data = load_syllabus('syllabus.json')
+    terms = set()
+    def walk(v):
+        if isinstance(v, dict):
+            for k, val in v.items():
+                terms.update(_tokenize(k))
+                walk(val)
+        elif isinstance(v, list):
+            for item in v:
+                walk(item)
+        else:
+            terms.update(_tokenize(v))
+    walk(data)
+    allowed_terms_cache[key] = terms
+    return terms
 
 def is_general_response(query):
     return query.lower() in ["yes", "no", "maybe", "okay", "sure", "thanks", "thank you"]
@@ -202,16 +222,10 @@ def is_query_allowed(query, course, session_id):
         return True
     if conversation_buffers.get(session_id):
         return True
-    embeddings = get_syllabus_embeddings(course or "ist256")
-    q_emb = get_embedding(query)
-    best_sim = -1.0
-    for emb in embeddings.values():
-        sim = float(np.dot(q_emb, emb) / (np.linalg.norm(q_emb) * np.linalg.norm(emb)))
-        if sim > best_sim:
-            best_sim = sim
-    return best_sim >= 0.75
-
-
+    q_terms = _tokenize(query)
+    allowed = get_allowed_terms(course)
+    overlap = q_terms & allowed
+    return len(overlap) > 0
 
 # Main chat responder, now accepts `course`
 def get_chat_response(user_question, session_id, email, course="ist256"):
@@ -293,4 +307,6 @@ Use short, clear explanations, include examples when helpful, and end with a bri
     formatted = format_explanation_text(formatted)
     save_chat_log(session_id, user_question, formatted, email, course)
     return formatted
+
+
 

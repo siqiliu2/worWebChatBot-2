@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 import os
 import json
 import numpy as np
+from collections import defaultdict, deque
 from langchain_openai import ChatOpenAI
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema import StrOutputParser
@@ -89,6 +90,10 @@ group_projects   = load_group_projects()
 # Maintain context for follow-up
 conversation_context = {"last_bot_message": None}
 
+# Per-session conversation memory (in-process only)
+MAX_HISTORY_TURNS = 3
+conversation_buffers = defaultdict(lambda: deque(maxlen=MAX_HISTORY_TURNS))
+
 # Keywords for routing questions
 GROUP_PROJECT_KEYWORDS = [
     "group project", "group assignment", "week 6", "lab activity", "lab assignment",
@@ -138,17 +143,52 @@ def flatten_syllabus_text(data):
     return "\n".join(f"- {line}" for line in lines)
 
 # Embedding setup for topic matching
-def get_allowed_topics():
-    # Default IST 256 syllabus used for embeddings
-    default = load_syllabus("syllabus.json")
-    return list(default.keys()) + [item for subs in default.values() for item in subs]
+def _extract_topics_from_syllabus(data):
+    topics = []
+    def walk(key, value):
+        if isinstance(value, dict):
+            topics.append(str(key))
+            for k, v in value.items():
+                walk(k, v)
+        elif isinstance(value, list):
+            topics.append(str(key))
+            for item in value:
+                if isinstance(item, (str, int, float)):
+                    topics.append(str(item))
+        else:
+            topics.append(str(key))
+            if isinstance(value, (str, int, float)):
+                topics.append(str(value))
+    for k, v in data.items():
+        walk(k, v)
+    seen, out = set(), []
+    for t in topics:
+        if t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
+
+def get_allowed_topics(course):
+    syllabus_file = "hcdd340_syllabus.json" if course == "hcdd340" else "syllabus.json"
+    try:
+        data = load_syllabus(syllabus_file)
+    except (FileNotFoundError, ValueError):
+        data = load_syllabus("syllabus.json")
+    return _extract_topics_from_syllabus(data)
 
 def get_embedding(text):
     client = openai.OpenAI(api_key=openai_api_key)
     resp = client.embeddings.create(input=text, model="text-embedding-ada-002")
     return np.array(resp.data[0].embedding)
 
-syllabus_embeddings = {topic: get_embedding(topic) for topic in get_allowed_topics()}
+syllabus_embeddings_cache = {}
+
+def get_syllabus_embeddings(course):
+    course_key = course or "ist256"
+    if course_key not in syllabus_embeddings_cache:
+        topics = get_allowed_topics(course_key)
+        syllabus_embeddings_cache[course_key] = {t: get_embedding(t) for t in topics}
+    return syllabus_embeddings_cache[course_key]
 
 def is_general_response(query):
     return query.lower() in ["yes", "no", "maybe", "okay", "sure", "thanks", "thank you"]
@@ -157,18 +197,21 @@ def extract_week_number(text):
     m = re.search(r"week\s*(\d+)", text.lower())
     return f"week {m.group(1)}" if m else None
 
-def is_query_allowed(query):
+def is_query_allowed(query, course, session_id):
     if is_general_response(query):
         return True
-    if conversation_context["last_bot_message"]:
+    if conversation_buffers.get(session_id):
         return True
+    embeddings = get_syllabus_embeddings(course or "ist256")
     q_emb = get_embedding(query)
-    sims = {
-        topic: np.dot(q_emb, emb) / (np.linalg.norm(q_emb) * np.linalg.norm(emb))
-        for topic, emb in syllabus_embeddings.items()
-    }
-    best = max(sims, key=sims.get)
-    return sims[best] > 0.75
+    best_sim = -1.0
+    for emb in embeddings.values():
+        sim = float(np.dot(q_emb, emb) / (np.linalg.norm(q_emb) * np.linalg.norm(emb)))
+        if sim > best_sim:
+            best_sim = sim
+    return best_sim >= 0.75
+
+
 
 # Main chat responder, now accepts `course`
 def get_chat_response(user_question, session_id, email, course="ist256"):
@@ -179,26 +222,34 @@ def get_chat_response(user_question, session_id, email, course="ist256"):
     except (FileNotFoundError, ValueError):
         syllabus = {}
 
-    # 2. Prepare prompts
+    # 2. Prepare prompts and limited conversation memory
     syllabus_str = flatten_syllabus_text(syllabus) if syllabus else 'No syllabus information is available right now.'
     instruction_str = flatten_instruction_text(course_instruction)
 
+    history_pairs = list(conversation_buffers[session_id])
+    if history_pairs:
+        history_str = "\n\n" + "\n\n".join([f"Student: {u}\nTutor: {b}" for (u, b) in history_pairs])
+    else:
+        history_str = ""
+
     system_prompt = f"""
-You are a {'HCDD 340' if course=='hcdd340' else 'Web Development Tutor for IST 256'}.
-Here is the course syllabus:
+You are a { 'HCDD 340 Tutor (Mobile Computing)' if course=='hcdd340' else 'Web Development Tutor for IST 256' }.
+STRICT SCOPE: Answer ONLY questions covered in this course's syllabus or foundational basics enabling those syllabus topics. If a question is outside scope, politely decline and suggest a related in-scope topic.
+
+Here is the course syllabus (for grounding):
 {syllabus_str}
 
-Here are the course instructions:
+Here are course policies/instructions:
 {instruction_str}
 
-If a student asks about a group project, you’ll be given that assignment text.
-Always explain your reasoning and ask a follow-up question.
-"""
+Use short, clear explanations, include examples when helpful, and end with a brief follow-up question.
+""".strip()
 
     chat_prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt),
         ("human", "{question}")
     ])
+
     model = ChatOpenAI(model="gpt-4o", openai_api_key=openai_api_key)
     chain = chat_prompt | model | StrOutputParser()
 
@@ -231,7 +282,11 @@ Always explain your reasoning and ask a follow-up question.
         response = chain.invoke({"question": user_question})
         conversation_context["last_bot_message"] = response
     else:
-        response = "I'm here to help with course topics. Could you refine your question?"
+        response = (
+        "I’m focused on this course’s syllabus and foundational basics. "
+        "That question seems outside scope. Would you like to ask about a "
+        "topic from the syllabus instead (e.g., one listed above)?"
+    )
 
     # 4. Format & log
     formatted = convert_code_blocks(response)

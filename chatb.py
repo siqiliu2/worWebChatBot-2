@@ -217,7 +217,7 @@ def extract_week_number(text):
     m = re.search(r"week\s*(\d+)", text.lower())
     return f"week {m.group(1)}" if m else None
 
-def is_query_allowed(query, course, session_id):
+def is_query_allowed(query, course, session_id, email):
     if is_general_response(query):
         return True
     if conversation_buffers.get(session_id) or has_session_history(session_id) or has_email_course_history(email, course):
@@ -292,7 +292,7 @@ Use short, clear explanations, include examples when helpful, and end with a bri
         prompt = f"Here are the course instructions:\n{json.dumps(course_instruction, indent=2)}\n\nStudent: {user_question}"
         response = chain.invoke({"question": prompt})
         conversation_context["last_bot_message"] = response
-    elif is_query_allowed(user_question, course, session_id):
+    elif is_query_allowed(user_question, course, session_id, email):
         response = chain.invoke({"question": user_question})
         conversation_context["last_bot_message"] = response
     else:
@@ -307,6 +307,7 @@ Use short, clear explanations, include examples when helpful, and end with a bri
     formatted = format_explanation_text(formatted)
     save_chat_log(session_id, user_question, formatted, email, course)
     return formatted
+
 
 
 

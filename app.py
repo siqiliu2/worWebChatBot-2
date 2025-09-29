@@ -47,12 +47,13 @@ def handle_auth():
     action = data["action"]
 
     conn = mysql.connector.connect(
-        host="Your DB hostname",
-        user="Your DB Username",
-        password="Your DB password",
-        database="Your Database Name",
-        port=Your DB PORT
+        host=os.environ["DB_HOST"],
+        user=os.environ["DB_USER"],
+        password=os.environ["DB_PASSWORD"],
+        database=os.environ["DB_NAME"],
+        port=int(os.environ.get("DB_PORT", "3306")),
     )
+
     cursor = conn.cursor()
 
     if action == "register":

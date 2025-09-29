@@ -2,6 +2,7 @@
 
 from flask import Flask, render_template, request, jsonify, session, redirect, url_for
 import uuid
+import os
 import hashlib
 import mysql.connector
 from db import create_user_if_not_exists, save_chat_log, get_chat_history

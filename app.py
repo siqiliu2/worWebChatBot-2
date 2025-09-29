@@ -26,7 +26,7 @@ def index():
         return redirect(url_for("select_course"))
 
     # Once we have both email and course, show the chat UI:
-    chat_history = get_chat_history(session["email"])
+    chat_history = get_chat_history(session["email"], session["course"])
     return render_template(
         "index.html",
         email=session["email"],

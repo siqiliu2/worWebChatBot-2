@@ -64,8 +64,11 @@ def convert_code_blocks(text):
 def load_syllabus(file_path):
     if not os.path.exists(file_path):
         raise FileNotFoundError(f"Syllabus file not found: {file_path}")
-    with open(file_path, "r") as f:
-        return json.load(f)
+    with open(file_path, "r", encoding="utf-8") as f:
+        try:
+            return json.load(f)
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Syllabus file is not valid JSON: {file_path}") from exc
 
 def load_group_projects(file_path="group_project.json"):
     if not os.path.exists(file_path):
@@ -115,6 +118,25 @@ def flatten_instruction_text(ci):
         lines.append("")
     return "\n".join(lines)
 
+def flatten_syllabus_text(data):
+    lines = []
+
+    def walk(prefix, value):
+        if isinstance(value, dict):
+            for child_key, child_value in value.items():
+                next_prefix = f"{prefix} > {child_key}" if prefix else child_key
+                walk(next_prefix, child_value)
+        elif isinstance(value, list):
+            items = ", ".join(str(item) for item in value) if value else "No details provided"
+            lines.append(f"{prefix}: {items}")
+        else:
+            lines.append(f"{prefix}: {value}")
+
+    for key, value in data.items():
+        walk(key, value)
+
+    return "\n".join(f"- {line}" for line in lines)
+
 # Embedding setup for topic matching
 def get_allowed_topics():
     # Default IST 256 syllabus used for embeddings
@@ -154,11 +176,11 @@ def get_chat_response(user_question, session_id, email, course="ist256"):
     syllabus_file = "hcdd340_syllabus.json" if course == "hcdd340" else "syllabus.json"
     try:
         syllabus = load_syllabus(syllabus_file)
-    except FileNotFoundError:
+    except (FileNotFoundError, ValueError):
         syllabus = {}
 
     # 2. Prepare prompts
-    syllabus_str    = "\n".join(f"- {t}: {', '.join(s)}" for t, s in syllabus.items())
+    syllabus_str = flatten_syllabus_text(syllabus) if syllabus else 'No syllabus information is available right now.'
     instruction_str = flatten_instruction_text(course_instruction)
 
     system_prompt = f"""
@@ -209,10 +231,10 @@ Always explain your reasoning and ask a follow-up question.
         response = chain.invoke({"question": user_question})
         conversation_context["last_bot_message"] = response
     else:
-        response = "I'm here to help with course topics—could you refine your question?"
+        response = "I'm here to help with course topics. Could you refine your question?"
 
     # 4. Format & log
     formatted = convert_code_blocks(response)
     formatted = format_explanation_text(formatted)
-    save_chat_log(session_id, user_question, formatted, email)
+    save_chat_log(session_id, user_question, formatted, email, course)
     return formatted

@@ -1,145 +1,145 @@
 {
-    "course": "HCDD340 HCD FOR MOBILE COMPUTING",
-    "overview": "This course provides a hands-on introduction to methods and tools for designing and developing mobile systems, focusing on input modalities, sensing, design guidelines, and accessibility using the Android ecosystem.",
-    "learning_objectives": [
-      "Become familiar with processes and tools for mobile system design and development",
-      "Understand design requirements and guidelines for mobile applications",
-      "Translate design ideas into functional prototypes and applications",
-      "Develop and evaluate mobile systems"
+  "course": "HCDD 340 HCD FOR MOBILE COMPUTING",
+  "overview": "This course provides a hands-on introduction to methods and tools for designing and developing mobile systems, focusing on input modalities, sensing, design guidelines, and accessibility using the Android ecosystem.",
+  "learning_objectives": [
+    "Become familiar with processes and tools for mobile system design and development",
+    "Understand design requirements and guidelines for mobile applications",
+    "Translate design ideas into functional prototypes and applications",
+    "Develop and evaluate mobile systems"
+  ],
+  "grading_breakdown": {
+    "Midterms": "33%",
+    "Assignments": "33%",
+    "Final Project": "34%",
+    "TOTAL": "100%"
+  },
+  "grading_scale": {
+    "A": "93%",
+    "A-": "90%",
+    "B+": "87%",
+    "B": "83%",
+    "B-": "80%",
+    "C+": "77%",
+    "C": "70%",
+    "D": "60%",
+    "F": "0%"
+  },
+  "midterm_details": {
+    "Midterm I": 16.5,
+    "Midterm II": 16.5
+  },
+  "assignment_details": {
+    "Assignment 1": 11,
+    "Assignment 2": 11,
+    "Assignment 3": 11
+  },
+  "final_project_details": {
+    "Proposal Submission": 4,
+    "Proposal Presentation": 5,
+    "Final Presentation": 10,
+    "Code and Documentation": 13,
+    "Mandatory Group Review": 2
+  },
+  "late_policy": {
+    "penalty_12_hours": "25% deduction",
+    "penalty_24_hours": "50% deduction",
+    "penalty_48_hours_or_more": "100% deduction"
+  },
+  "course_requirements": {
+    "Assignments": "Three assignments throughout the course, see Weekly Schedule for deadlines.",
+    "Midterms": "Two mid-term exams. No books, articles, or electronic devices allowed. Each exam is approximately 30 minutes with multiple choice and short answer questions.",
+    "Final Project": "Develop and evaluate an Android app; encourages participation in challenges such as the Nittany AI Challenge and IdeaMakers Challenge."
+  },
+  "bonus_features": {
+    "Five non-trivial screens": 1,
+    "Screen rotation support": 1,
+    "Text input handling": 1,
+    "Scrolling view support": 1,
+    "Spinner integration": 1,
+    "Multiple lifecycle states usage": 2,
+    "RecyclerView implementation": 3
+  },
+  "mandatory_group_review": "Each student must evaluate group members' performance; used to adjust individual grades for the final project.",
+  "course_policies": {
+    "academic_integrity": "Academic integrity is expected; violations such as falsification, misrepresentation, or cheating are not tolerated.",
+    "disability_accommodation": "Reasonable accommodations available through Student Disability Resources (SDR).",
+    "counseling_services": "Confidential counseling services available; see CAPS resources.",
+    "emergency_notifications": "Students encouraged to enroll in PSUAlert for emergency notifications.",
+    "communication_expectations": "Students should email through Canvas and check regularly.",
+    "groupwork": "Professional collaboration required; non-participating members will not receive group grades.",
+    "canvas_login": "Daily login expected for course updates, announcements, and emails.",
+    "preferred_name_pronouns": "Requests for preferred names and pronouns will be honored.",
+    "masking_policy": "Compliance with Penn State pandemic policies required.",
+    "class_recording": "Class lectures may be recorded for educational purposes only.",
+    "student_recording": "Students must get express permission to record classes (Policy AD 40).",
+    "webcam_policy": "Webcams may be required during exams to protect academic integrity.",
+    "copyright_policy": "Unauthorized distribution of course materials is prohibited."
+  },
+  "weekly_schedule": {
+    "Week 1": [
+      "Introduction and Overview (01/14)",
+      "Introduction to Android Development (01/16)"
     ],
-    "grading_breakdown": {
-      "Midterms": 33%,
-      "Assignments": 33%,
-      "Final Project": 34%,
-      "TOTAL": 100
-    },
-    "grading_scale": {
-      "A": 93%,
-      "A-": 90%,
-      "B+": 87%,
-      "B": 83%,
-      "B-": 80%,
-      "C+": 77%,
-      "C": 70%,
-      "D": 60%,
-      "F": 0
-    },
-    "midterm_details": {
-      "Midterm I": 16.5,
-      "Midterm II": 16.5
-    },
-    "assignment_details": {
-      "Assignment 1": 11,
-      "Assignment 2": 11,
-      "Assignment 3": 11
-    },
-    "final_project_details": {
-      "Proposal Submission": 4,
-      "Proposal Presentation": 5,
-      "Final Presentation": 10,
-      "Code and Documentation": 13,
-      "Mandatory Group Review": 2
-    },
-    "late_policy": {
-      "12_hours_penalty": 25%deduction,
-      "24_hours_penalty": 50%deduction,
-      "48_hours_or_more_penalty": 100%deduction
-    },
-    "course_requirements": {
-      "Assignments": "Three assignments throughout the course, see Weekly Schedule for deadlines.",
-      "Midterms": "Two mid-term exams. No books, articles, or electronic devices allowed. Each exam is ~30 minutes with multiple choice and short answer questions.",
-      "Final Project": "Develop and evaluate an Android app; encourages participation in external challenges such as the Nittany AI Challenge and IdeaMakers Challenge."
-    },
-    "bonus_features": {
-      "5_non_trivial_screens": 1,
-      "Screen_rotation_support": 1,
-      "Text_input_handling": 1,
-      "Scrolling_view_support": 1,
-      "Spinner_integration": 1,
-      "Multiple_lifecycle_states_usage": 2,
-      "RecyclerView_implementation": 3
-    },
-    "mandatory_group_review": "Each student must evaluate group members’ performance; used to adjust individual grades for final project.",
-    "course_policies": {
-      "academic_integrity": "Academic integrity is expected; violations such as falsification, misrepresentation, or cheating are not tolerated.",
-      "disability_accommodation": "Reasonable accommodations available through Student Disability Resources (SDR).",
-      "counseling_services": "Confidential counseling services available; see CAPS resources.",
-      "emergency_notifications": "Students encouraged to enroll in PSUAlert for emergency notifications.",
-      "communication_expectations": "Students should email through Canvas and check regularly.",
-      "groupwork": "Professional collaboration required; non-participating members will not receive group grades.",
-      "canvas_login": "Daily login expected for course updates, announcements, and emails.",
-      "preferred_name_pronouns": "Requests for preferred names and pronouns will be honored.",
-      "masking_policy": "Compliance with Penn State’s pandemic policies required.",
-      "class_recording": "Class lectures may be recorded for educational purposes only.",
-      "student_recording": "Students must get express permission to record classes (Policy AD 40).",
-      "webcam_policy": "Webcams may be required during exams to protect academic integrity.",
-      "copyright_policy": "Unauthorized distribution of course materials is prohibited."
-    },
-    "Weekly_Schedule": {
-      "Week 1": [
-        "Introduction and Overview (01/14)",
-        "Introduction to Android Development (01/16)"
-      ],
-      "Week 2": [
-        "Layout I (01/21)",
-        "Layout II (01/23)"
-      ],
-      "Week 3": [
-        "Layout III (01/28)",
-        "Event Handling and Interactivity I (01/30)"
-      ],
-      "Week 4": [
-        "Event Handling and Interactivity II (02/04)",
-        "Device Configuration and UI Changes (02/06)"
-      ],
-      "Week 5": [
-        "Text Input (02/11)",
-        "Menus (02/13)"
-      ],
-      "Week 6": [
-        "No Class"
-      ],
-      "Week 7": [
-        "Snackbar and Dialogs (02/25)",
-        "Intent and Activities (02/27)"
-      ],
-      "Week 8": [
-        "Activity Lifecycle and Data Storage (03/04)",
-        "Activity Lifecycle and Data Storage + ScrollView (half) (03/06)"
-      ],
-      "Week 9": [
-        "Spring Break - No Classes"
-      ],
-      "Week 10": [
-        "ScrollView (remaining half) (03/18)",
-        "Spinner (03/20)"
-      ],
-      "Week 11": [
-        "Accessibility (03/25)",
-        "Midterm II (03/27)"
-      ],
-      "Week 12": [
-        "Material Design (04/01)",
-        "Final Project Ideas (04/03)"
-      ],
-      "Week 13": [
-        "Generative AI for Android Development (04/08)",
-        "Proposal Presentation (04/10)"
-      ],
-      "Week 14": [
-        "RecyclerView I (04/15)",
-        "RecyclerView II (04/17)"
-      ],
-      "Week 15": [
-        "Final Project Implementation (04/22)",
-        "Final Project Implementation (04/24)"
-      ],
-      "Week 16": [
-        "Final Project Presentation (04/29)"
-      ],
-      "Exam Week": [
-        "Final Code and Documentation (05/05)",
-        "Mandatory Group Review (05/06)"
-      ]
-    }
+    "Week 2": [
+      "Layout I (01/21)",
+      "Layout II (01/23)"
+    ],
+    "Week 3": [
+      "Layout III (01/28)",
+      "Event Handling and Interactivity I (01/30)"
+    ],
+    "Week 4": [
+      "Event Handling and Interactivity II (02/04)",
+      "Device Configuration and UI Changes (02/06)"
+    ],
+    "Week 5": [
+      "Text Input (02/11)",
+      "Menus (02/13)"
+    ],
+    "Week 6": [
+      "No Class"
+    ],
+    "Week 7": [
+      "Snackbar and Dialogs (02/25)",
+      "Intent and Activities (02/27)"
+    ],
+    "Week 8": [
+      "Activity Lifecycle and Data Storage (03/04)",
+      "Activity Lifecycle and Data Storage + ScrollView (half) (03/06)"
+    ],
+    "Week 9": [
+      "Spring Break - No Classes"
+    ],
+    "Week 10": [
+      "ScrollView (remaining half) (03/18)",
+      "Spinner (03/20)"
+    ],
+    "Week 11": [
+      "Accessibility (03/25)",
+      "Midterm II (03/27)"
+    ],
+    "Week 12": [
+      "Material Design (04/01)",
+      "Final Project Ideas (04/03)"
+    ],
+    "Week 13": [
+      "Generative AI for Android Development (04/08)",
+      "Proposal Presentation (04/10)"
+    ],
+    "Week 14": [
+      "RecyclerView I (04/15)",
+      "RecyclerView II (04/17)"
+    ],
+    "Week 15": [
+      "Final Project Implementation (04/22)",
+      "Final Project Implementation (04/24)"
+    ],
+    "Week 16": [
+      "Final Project Presentation (04/29)"
+    ],
+    "Exam Week": [
+      "Final Code and Documentation (05/05)",
+      "Mandatory Group Review (05/06)"
+    ]
   }
+}
